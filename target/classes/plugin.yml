@@ -1,0 +1,11 @@
+name: DSMRealTime
+version: 1.0-SNAPSHOT
+main: org.projectdsm.dsmrealtime.dsmrealtime.DSMRealTime
+api-version: "1.13"
+authors: [HS_Orion]
+description: Sets the game time and weather of the spigot server to the time and weather in real life
+website: https://veloticstechnologies.github.io/projectdsm
+commands:
+ synctime:
+    description: Enable and Disable Sync Time
+    usage: /<command> <enable/disable>

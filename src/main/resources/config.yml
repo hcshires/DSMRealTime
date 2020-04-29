@@ -1,0 +1,13 @@
+# DSMRealTime - Sync your Spigot Server to your real time and weather
+
+# Set your current timezone to be synced with your server
+# Acceptable formats include: EST, America/Los_Angeles, and GMT-8:00
+# View the full list of timezones here: https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
+Timezone: "America/Chicago"
+
+# Set the update interval, in ticks, for how frequently to update the weather and time statuses on your server
+# For instance, the default 100 is roughly every ten seconds
+UpdateInterval: 100
+
+# Congratulations! You've set up DSMRealTime to work with your server.
+# Plugin by HS_Orion from ProjectDSM - https://projectdsm.org
