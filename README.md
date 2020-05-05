@@ -10,4 +10,7 @@ A Spigot plugin to sync Spigot Minecraft servers with time and weather from a sp
 - Each feature is customizable via a config.yml
 - Lightweight and easy to set up
 
+# Installation
+Coming soon!
+
 Created by Henry Shires with ProjectDSM Minecraft Server - [https://projectdsm.org](https://projectdsm.org)
