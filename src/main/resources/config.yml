@@ -1,13 +1,42 @@
 # DSMRealTime - Sync your Spigot Server to your real time and weather
+# Please config your DSMRealTime plugin using the instructions and fields below:
+#
+# First, verify which features of DSMRealTime you want to enable
+# These can be changed anytime using the built-in commands
+# To enable, set to true. To disable, set to false
+SyncTime: true
+SyncWeather: true
 
-# Set your current timezone to be synced with your server
-# Acceptable formats include: EST, America/Los_Angeles, and GMT-8:00
-# View the full list of timezones here: https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
-Timezone: "America/Chicago"
+# Set the Minecraft world you want DSMRealTime to sync with. Only one world is supported.
+World: "world"
 
-# Set the update interval, in ticks, for how frequently to update the weather and time statuses on your server
-# For instance, the default 100 is roughly every ten seconds
-UpdateInterval: 100
+################################# SYNC TIME SETTINGS #################################################################
+#                                                                                                                    #
+# Set your current timezone to be synced with your server                                                            #
+# Acceptable formats include: EST, America/Los_Angeles, and GMT-8:00                                                 #
+# View the full list of timezones here: https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations                #
+#                                                                                                                    #
+# The timezone is separate from your set location, as the weather API restricts the amount of calls that can be made #
+# In order for time to update more frequently, it must be seperate from the API                                      #
+# Additionally, if you wish to set your time different from your weather location, this makes it possible            #
+# Note: Time is automatically disabled unless you add a timezone, regardless of the SyncTime field's value           #
+Timezone: "America/Chicago"                                                                                          #
+#                                                                                                                    #
+######################################################################################################################
+
+################################# SYNC WEATHER SETTINGS ##############################################################
+#                                                                                                                    #
+# In order to access the sync weather feature, create an account at https://openweathermap.org/                      #
+# Then, create an API key at https://openweathermap.org/appid and copy it                                            #
+# Finally, paste the API key below and DO NOT SHARE IT WITH OTHERS                                                   #
+# Note: Weather is automatically disabled unless you add an API key, regardless of the SyncWeather field's value     #
+APIKey: "API_KEY"                                                                                                    #
+#                                                                                                                    #
+# Set the location to pull weather data from and sync to your server                                                 #
+# Format: {city name}, {state spelled out}, {country code} or {city name}, {country code}                            #
+Location: "Des Moines, Iowa, USA"                                                                                    #
+#                                                                                                                    #
+######################################################################################################################
 
 # Congratulations! You've set up DSMRealTime to work with your server.
 # Plugin by HS_Orion from ProjectDSM - https://projectdsm.org
