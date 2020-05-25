@@ -22,9 +22,7 @@ Looking for additional support or interesting in the ProjectDSM Community? Join 
 
 Otherwise, please report bugs, support issues, or feature suggestions by [opening an issue on GitHub](https://github.com/hcshires/DSMRealTime/issues/new/choose)
 
-##
-
 ## Installation
-Coming soon!
+For installation and use, please [visit our GitHub wiki](https://github.com/hcshires/DSMRealTime/wiki)
 
 Created by Henry Shires with ProjectDSM Minecraft Server - [https://projectdsm.org](https://projectdsm.org)
