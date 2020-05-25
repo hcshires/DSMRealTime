@@ -18,7 +18,7 @@ DSMRealTime adds a level of realism not found in most other plugins, and in fact
 
 ## Support
 
-Looking for additional support or interesting in the ProjectDSM Community? Join the [ProjectDSM Discord community](http://discord.projectdsm.org) and find ways to answer your questions or get involved.
+Looking for additional support or interesting in the ProjectDSM Community? Join the [ProjectDSM Discord community (http://discord.projectdsm.org) and find ways to answer your questions or get involved.
 
 Otherwise, please report bugs, support issues, or feature suggestions by [opening an issue on GitHub](https://github.com/hcshires/DSMRealTime/issues/new/choose)
 
