@@ -2,7 +2,7 @@
 A Spigot plugin to sync Spigot Minecraft servers with time and weather from a specified location
 
 This plugin is developed by staff from the ProjectDSM Minecraft Server, a realism server with a goal of re-creating Des Moines, Iowa in Minecraft
-Learn more at [https://projectdsm.org](https://projectdsm.org)
+### Learn more at [https://projectdsm.org](https://projectdsm.org)
 
 ## Why Use DSMRealTime?
 DSMRealTime adds a level of realism not found in most other plugins, and in fact, is the only one of its kind. By adding time and weather sync, players can experience location-specific realism for any creative or showcase builds.
