@@ -1,15 +1,19 @@
 package org.projectdsm.dsmrealtime.dsmrealtime;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.projectdsm.dsmrealtime.dsmrealtime.commands.ToggleCommand;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -23,7 +27,6 @@ public final class DSMRealTime extends JavaPlugin {
     private static World world;
     private static String timezone, apiKey, location;
     private static boolean isTimeEnabled, isWeatherEnabled;
-    private static long weatherOffset = -interval; // Negated to start positive in Scheduler
 
     /**
      * Check if the config is set up properly and is returning values
@@ -118,11 +121,13 @@ public final class DSMRealTime extends JavaPlugin {
      * @param str - the specified JSON string
      * @return the data as a Java Map
      */
-    public static Map<String, Object> jsonToMap(String str) {
-        return new Gson().fromJson(
-                str, new TypeToken<Map<String, Object>>() {
-                }.getType()
-        );
+    public static String jsonToMap(String str) {
+        JsonObject json = new Gson().fromJson(str, JsonObject.class);
+
+        JsonArray weather = json.get("weather").getAsJsonArray();
+        JsonObject data = weather.get(0).getAsJsonObject();
+
+        return data.get("main").getAsString();
     }
 
     /**
@@ -142,7 +147,7 @@ public final class DSMRealTime extends JavaPlugin {
      * @return a Java Map of the current weather condition data
      * Possible weather condition data include "clear", "rain", "snow", etc.
      */
-    private static Map<String, Object> getWeatherData(String location, String apiKey) {
+    private static String getWeatherData(String location, String apiKey) {
         final String weather = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apiKey + "&units=imperial";
 
         /* Get Data from OpenWeatherMap page */
@@ -159,9 +164,10 @@ public final class DSMRealTime extends JavaPlugin {
             rd.close();
             System.out.println("[DSMRealTime] Received Weather Data...");
 
-            System.out.println(result.toString());
+            String weatherOutput = jsonToMap(result.toString());
+            System.out.println("Current Weather: " + weatherOutput);
 
-            return jsonToMap(result.toString()); // Convert the String to a map
+            return weatherOutput; // Convert the String to a map
 
         } catch (IOException e) {
             System.out.println("[DSMRealTime] ERROR: Weather Data Failed to Update");
@@ -173,19 +179,28 @@ public final class DSMRealTime extends JavaPlugin {
     /**
      * Set the weather of the world given updated API weather data
      *
-     * @param weatherData - the specified weather data Java Map
+     * @param data - the specified weather data Java Map
      */
-    private static void setWeather(Map<String, Object> weatherData) {
-        Map<String, Object> weather = jsonToMap(weatherData.get("weather").toString()); // Return the JSON "weather" section
-        String data = weather.get("main").toString(); // Get the line "main" from the given "weather" Map
-
-        world.setStorm(!data.contains("clear") || !data.contains("clouds")); // Set weather to clear if the data says clear, storm if not clear
+    private static void setWeather(String data) {
+        world.setStorm(!data.contains("Clear") && !data.contains("Clouds")); // Set weather to clear if the data says clear, storm if not clear
         System.out.println("[DSMRealTime] Weather Updated!");
     }
 
+    /**
+     * Set the config file values to the current state of SyncTime and SyncWeather based on player interaction with commands
+     */
     private void setConfig() {
-        getConfig().set("SyncTime", isTimeEnabled);
-        getConfig().set("SyncWeather", isWeatherEnabled);
+        File configFile = new File(JavaPlugin.getPlugin(DSMRealTime.class).getDataFolder().getPath(), "config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+
+        config.set("SyncTime", isTimeEnabled);
+        config.set("SyncWeather", isWeatherEnabled);
+
+        try {
+            config.save(configFile);
+        } catch (IOException io) {
+            io.printStackTrace();
+        }
     }
 
     @Override
@@ -213,7 +228,6 @@ public final class DSMRealTime extends JavaPlugin {
         /* Schedule an update time and weather task */
         BukkitScheduler scheduler = getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(this, () -> {
-            weatherOffset = -weatherOffset; // Negate every time, run setWeather() when negative
 
             setConfig(); // Write current enabled/disabled values to config
 
@@ -222,9 +236,9 @@ public final class DSMRealTime extends JavaPlugin {
                 setTime(timezone);
             }
 
-            if (isWeatherEnabled && checkWeatherValues() && weatherOffset < 0) { // Every two minutes (when set to negative)
+            if (isWeatherEnabled && checkWeatherValues()) { // Every two minutes (when set to negative)
                 System.out.println("[DSMRealTime] Updating Weather...");
-                Map<String, Object> currentWeather = getWeatherData(location, apiKey);
+                String currentWeather = getWeatherData(location, apiKey);
                 if (currentWeather != null) {
                     setWeather(currentWeather);
                 } else {

@@ -1,0 +1,42 @@
+{
+  "coord": {
+    "lon": -93.6,
+    "lat": 41.59
+  },
+  "weather": [
+    {
+      "id": 802,
+      "main": "Clouds",
+      "description": "scattered clouds",
+      "icon": "03d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 76.15,
+    "feels_like": 71.62,
+    "temp_min": 75,
+    "temp_max": 77,
+    "pressure": 1015,
+    "humidity": 25
+  },
+  "visibility": 16093,
+  "wind": {
+    "speed": 3.36
+  },
+  "clouds": {
+    "all": 40
+  },
+  "dt": 1588544077,
+  "sys": {
+    "type": 1,
+    "id": 3863,
+    "country": "US",
+    "sunrise": 1588504071,
+    "sunset": 1588554868
+  },
+  "timezone": -18000,
+  "id": 4853828,
+  "name": "Des Moines",
+  "cod": 200
+}

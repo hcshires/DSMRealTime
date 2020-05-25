@@ -69,7 +69,7 @@ public class ToggleCommand implements CommandExecutor {
                 System.out.println("[DSMRealTime] Sync Weather is now disabled");
                 return true;
             } else {
-                sender.sendMessage(DSMRealTime.getFormattedMessage() + " Improper usage:\nType /syncweather enable to enable or /syncweather disable to disable");
+                sender.sendMessage(DSMRealTime.getFormattedMessage() + " Improper usage of" + command.getName());
                 return false;
             }
         }
