@@ -26,4 +26,4 @@ Otherwise, please report bugs, support issues, or feature suggestions by [openin
 For installation and use, please [visit our GitHub wiki](https://github.com/hcshires/DSMRealTime/wiki)
 
 Created by Henry Shires with ProjectDSM Minecraft Server - [https://projectdsm.org](https://projectdsm.org)
-[View Developer Page](https://hcshires.github.io/projectdsm)
+| [View Developer Page](https://hcshires.github.io/projectdsm)
