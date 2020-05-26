@@ -116,18 +116,18 @@ public final class DSMRealTime extends JavaPlugin {
     }
 
     /**
-     * Converts JSON data from OpenWeatherMap into Java object
+     * Parses given JSON from OpenWeatherMap to return the unique weather condition ID
      *
      * @param str - the specified JSON string
-     * @return the data as a Java Map
+     * @return the weather condition ID
      */
-    public static String jsonToMap(String str) {
+    public static int jsonToId(String str) {
         JsonObject json = new Gson().fromJson(str, JsonObject.class);
 
         JsonArray weather = json.get("weather").getAsJsonArray();
         JsonObject data = weather.get(0).getAsJsonObject();
 
-        return data.get("main").getAsString();
+        return data.get("id").getAsInt();
     }
 
     /**
@@ -147,7 +147,7 @@ public final class DSMRealTime extends JavaPlugin {
      * @return a Java Map of the current weather condition data
      * Possible weather condition data include "clear", "rain", "snow", etc.
      */
-    private static String getWeatherData(String location, String apiKey) {
+    private static int getWeatherData(String location, String apiKey) {
         final String weather = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apiKey + "&units=imperial";
 
         /* Get Data from OpenWeatherMap page */
@@ -164,25 +164,27 @@ public final class DSMRealTime extends JavaPlugin {
             rd.close();
             System.out.println("[DSMRealTime] Received Weather Data...");
 
-            String weatherOutput = jsonToMap(result.toString());
-            System.out.println("Current Weather: " + weatherOutput);
+            int weatherOutput = jsonToId(result.toString());
+            System.out.println("[DSMRealTime] Current Weather ID: " + weatherOutput);
 
             return weatherOutput; // Convert the String to a map
 
         } catch (IOException e) {
             System.out.println("[DSMRealTime] ERROR: Weather Data Failed to Update");
             e.printStackTrace();
-            return null;
+            return 0;
         }
     }
 
     /**
      * Set the weather of the world given updated API weather data
      *
-     * @param data - the specified weather data Java Map
+     * @param id - the specified weather data Java Map
      */
-    private static void setWeather(String data) {
-        world.setStorm(!data.contains("Clear") && !data.contains("Clouds")); // Set weather to clear if the data says clear, storm if not clear
+    private static void setWeather(int id) {
+        boolean setStorm = id < 700;
+
+        world.setStorm(setStorm); // Set weather to clear if the data says clear, storm if not clear
         System.out.println("[DSMRealTime] Weather Updated!");
     }
 
@@ -238,8 +240,8 @@ public final class DSMRealTime extends JavaPlugin {
 
             if (isWeatherEnabled && checkWeatherValues()) { // Every two minutes (when set to negative)
                 System.out.println("[DSMRealTime] Updating Weather...");
-                String currentWeather = getWeatherData(location, apiKey);
-                if (currentWeather != null) {
+                int currentWeather = getWeatherData(location, apiKey);
+                if (currentWeather != 0) {
                     setWeather(currentWeather);
                 } else {
                     System.out.println("[DSMRealTime] Weather Data is NULL. Is your API key valid?");

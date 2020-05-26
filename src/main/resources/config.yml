@@ -1,6 +1,8 @@
 # DSMRealTime - Sync your Spigot Server to your real time and weather
 # Please config your DSMRealTime plugin using the instructions and fields below:
 #
+# In-depth instructions can be found here: https://github.com/hcshires/DSMRealTime/wiki/Installation
+#
 # First, verify which features of DSMRealTime you want to enable
 # These can be changed anytime using the built-in commands
 # To enable, set to true. To disable, set to false
