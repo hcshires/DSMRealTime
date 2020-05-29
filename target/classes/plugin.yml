@@ -1,5 +1,5 @@
 name: DSMRealTime
-version: 1.0.0-beta.1
+version: 1.0.0-beta.2
 main: org.projectdsm.dsmrealtime.dsmrealtime.DSMRealTime
 api-version: "1.13"
 authors: [HS_Orion]
