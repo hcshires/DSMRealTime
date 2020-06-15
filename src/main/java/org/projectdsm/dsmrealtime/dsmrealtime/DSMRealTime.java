@@ -219,8 +219,9 @@ public final class DSMRealTime extends JavaPlugin {
     public void onEnable() {
         /* Setup config.yml */
 
+        getConfig().options().copyHeader(true);
         getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
+        saveConfig();
 
         /* Get Data from Config */
         world = getServer().getWorld(Objects.requireNonNull(getConfig().getString("World")));
