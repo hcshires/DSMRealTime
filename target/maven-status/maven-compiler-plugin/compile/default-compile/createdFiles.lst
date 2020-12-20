@@ -1,2 +1,2 @@
-org\projectdsm\dsmrealtime\dsmrealtime\commands\ToggleCommand.class
-org\projectdsm\dsmrealtime\dsmrealtime\DSMRealTime.class
+org\projectdsm\dsmrealtime\commands\ToggleCommand.class
+org\projectdsm\dsmrealtime\DSMRealTime.class

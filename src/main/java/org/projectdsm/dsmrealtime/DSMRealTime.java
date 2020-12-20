@@ -19,47 +19,59 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.logging.Logger;
 
+/**
+ * Configures and runs DSMRealTime time and weather sync via a Bukkit scheduled task
+ */
 public final class DSMRealTime extends JavaPlugin {
 
     private static final long interval = 1200; // Update every minute
-    private static final String formattedMessage = ChatColor.GRAY + "[" + ChatColor.RED + "DSMRealTime" + ChatColor.GRAY + "]" + ChatColor.WHITE;
+    private static final String formattedMessage = ChatColor.GRAY + "[" + ChatColor.RED + "DSMRealTime" + ChatColor.GRAY + "]" + ChatColor.WHITE + " ";
+    private static Logger logger;
     private static World world;
     private static String timezone, apiKey, location;
     private static boolean isTimeEnabled, isWeatherEnabled, debug;
 
     /**
-     * Check if the config is set up properly and is returning values
+     * Check if the config is set up properly and is returning values for time sync
      *
      * @return true if all values have been properly set in config.yml, false otherwise
      */
     public static boolean checkTimeValues() {
         boolean success = true;
-
-        /* Check for missing values */
         if (timezone.equals("")) {
             setTimeEnabled(false);
-            String message = formattedMessage + " ERROR: Missing config values for Sync Time, disabling. " +
-                    "To fix, verify the config.yml has been setup and reload";
-            Bukkit.broadcastMessage(message);
-            System.out.println(message); // Override debug value
+            createErrorMessage();
             success = false;
         }
 
         return success;
     }
 
+    /**
+     * Check if the config is set up properly and is returning values for weather sync
+     *
+     * @return true if all values have been properly set in config.yml, false otherwise
+     */
     public static boolean checkWeatherValues() {
         boolean success = true;
         if (apiKey.equals("") || apiKey.equalsIgnoreCase("API_KEY") || location.equals("")) {
             setWeatherEnabled(false);
-            String message = formattedMessage + " ERROR: Missing config values for Sync Weather, disabling. " +
-                    "To fix, verify the config.yml has been setup and reload";
-            Bukkit.broadcastMessage(message);
-            System.out.println(message); // Override debug value
+            createErrorMessage();
             success = false;
         }
         return success;
+    }
+
+    /**
+     * Create and log an error message about the config file
+     */
+    private static void createErrorMessage() {
+        String message = formattedMessage + "ERROR: Missing one or more config values, disabling. " +
+                "To fix, verify the config.yml has been setup and reload";
+        Bukkit.broadcastMessage(message);
+        logger.warning(message); // Override debug value
     }
 
     /**
@@ -138,7 +150,7 @@ public final class DSMRealTime extends JavaPlugin {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone)); // Get the time instance
         long time = (1000 * cal.get(Calendar.HOUR_OF_DAY)) + (16 * cal.get(Calendar.MINUTE)) - 6000;
         world.setTime(time);
-        debug("[DSMRealTime] Time Updated!");
+        debug("Time Updated!");
     }
 
     /**
@@ -162,15 +174,15 @@ public final class DSMRealTime extends JavaPlugin {
                 result.append(line);
             }
             rd.close();
-            debug("[DSMRealTime] Received Weather Data...");
+            debug("Received Weather Data...");
 
             int weatherOutput = jsonToId(result.toString());
-            debug("[DSMRealTime] Current Weather ID: " + weatherOutput);
+            debug("Current Weather ID: " + weatherOutput);
 
             return weatherOutput; // Convert the String to a map
 
         } catch (IOException e) {
-            System.out.println("[DSMRealTime] ERROR: Weather Data Failed to Update"); // Override debug value
+            logger.warning("ERROR: Weather Data Failed to Update"); // Override debug value
             e.printStackTrace();
             return 0;
         }
@@ -185,7 +197,7 @@ public final class DSMRealTime extends JavaPlugin {
         boolean setStorm = id < 700;
 
         world.setStorm(setStorm); // Set weather to clear if the data says clear, storm if not clear
-        debug("[DSMRealTime] Weather Updated!");
+        debug("Weather Updated!");
     }
 
     /**
@@ -211,14 +223,16 @@ public final class DSMRealTime extends JavaPlugin {
      */
     private static void debug(String message) {
         if (debug) {
-            System.out.println(message);
+            logger.info(message);
         }
     }
 
+    /**
+     * Plugin startup logic, including initializing a config file if one doesn't exist and parsing it for fields
+     */
     @Override
     public void onEnable() {
         /* Setup config.yml */
-
         getConfig().options().copyHeader(true);
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -228,13 +242,14 @@ public final class DSMRealTime extends JavaPlugin {
         timezone = getConfig().getString("Timezone");
         apiKey = getConfig().getString("APIKey");
         location = getConfig().getString("Location");
-
         isTimeEnabled = getConfig().getBoolean("SyncTime");
         isWeatherEnabled = getConfig().getBoolean("SyncWeather");
-
         debug = getConfig().getBoolean("Debug");
 
-        System.out.println("[DSMRealTime]: Starting..."); // Override debug value
+        /* Get Logger */
+        logger = getLogger();
+
+        logger.info("Starting..."); // Override debug value
 
         /* Set Command Executors */
         Objects.requireNonNull(getCommand("synctime")).setExecutor(new ToggleCommand());
@@ -243,30 +258,30 @@ public final class DSMRealTime extends JavaPlugin {
         /* Schedule an update time and weather task */
         BukkitScheduler scheduler = getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(this, () -> {
-
             setConfig(); // Write current enabled/disabled values to config
-
             if (isTimeEnabled && checkTimeValues()) {
-                debug("[DSMRealTime] Updating Time...");
+                debug("Updating Time...");
                 setTime(timezone);
             }
 
             if (isWeatherEnabled && checkWeatherValues()) { // Every two minutes (when set to negative)
-                debug("[DSMRealTime] Updating Weather...");
+                debug("Updating Weather...");
                 int currentWeather = getWeatherData(location, apiKey);
                 if (currentWeather != 0) {
                     setWeather(currentWeather);
                 } else {
-                    System.out.println("[DSMRealTime] Weather Data is NULL. Is your API key valid?"); // Override debug value
+                    logger.warning("Weather Data is NULL. Is your API key valid?"); // Override debug value
                 }
             }
         }, 0L, interval);
     }
 
+    /**
+     * Plugin shutdown logic
+     */
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         setConfig();
-        System.out.println("[DSMRealTime]: Stopping..."); // Override debug value
+        logger.info("Stopping..."); // Override debug value
     }
 }
