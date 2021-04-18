@@ -71,7 +71,7 @@ public final class DSMRealTime extends JavaPlugin {
         String message = formattedMessage + "ERROR: Missing one or more config values, disabling. " +
                 "To fix, verify the config.yml has been setup and reload";
         Bukkit.broadcastMessage(message);
-        logger.warning(message); // Override debug value
+        logger.severe(message); // Override debug value
     }
 
     /**
@@ -149,8 +149,13 @@ public final class DSMRealTime extends JavaPlugin {
         // Ticks = (Hours * 1000) - 6000
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone)); // Get the time instance
         long time = (1000 * cal.get(Calendar.HOUR_OF_DAY)) + (16 * cal.get(Calendar.MINUTE)) - 6000;
-        world.setTime(time);
-        debug("Time Updated!");
+        if (world != null) {
+            world.setTime(time);
+            debug("Time Updated!");
+        } else {
+            logger.severe(ChatColor.RED + "ERROR: Unable to find world. Make sure you've spelled it correctly in the config file.");
+        }
+
     }
 
     /**
@@ -182,7 +187,7 @@ public final class DSMRealTime extends JavaPlugin {
             return weatherOutput; // Convert the String to a map
 
         } catch (IOException e) {
-            logger.warning("ERROR: Weather Data Failed to Update"); // Override debug value
+            logger.severe("ERROR: Weather Data Failed to Update"); // Override debug value
             e.printStackTrace();
             return 0;
         }
@@ -196,8 +201,13 @@ public final class DSMRealTime extends JavaPlugin {
     private static void setWeather(int id) {
         boolean setStorm = id < 700;
 
-        world.setStorm(setStorm); // Set weather to clear if the data says clear, storm if not clear
-        debug("Weather Updated!");
+        if (world != null) {
+            world.setStorm(setStorm); // Set weather to clear if the data says clear, storm if not clear
+            debug("Weather Updated!");
+        } else {
+            logger.severe(ChatColor.RED + "ERROR: Unable to find world. Make sure you've spelled it correctly in the config file.");
+        }
+
     }
 
     /**
