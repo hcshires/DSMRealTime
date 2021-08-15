@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -249,6 +250,10 @@ public final class DSMRealTime extends JavaPlugin {
 
         /* Get Data from Config */
         world = getServer().getWorld(Objects.requireNonNull(getConfig().getString("World")));
+        if (world == null) { // World isn't loaded or doesn't exist
+            world = getServer().createWorld(new WorldCreator(getConfig().getString("World"))); // The createWorld() method will load a given world if it already exists
+            getLogger().info("World \"" + getConfig().getString("World") + "\" wasn't loaded or didn't exist. If nothing is happening in the world you expected, check your spelling in config.yml and delete any new worlds that were generated with the misspelled name.");
+        }
         timezone = getConfig().getString("Timezone");
         apiKey = getConfig().getString("APIKey");
         location = getConfig().getString("Location");
